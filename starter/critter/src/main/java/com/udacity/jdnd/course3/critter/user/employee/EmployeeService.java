@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,10 +46,29 @@ public class EmployeeService {
     }
 
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        DayOfWeek dayOfWeek = employeeDTO.getDate().getDayOfWeek();
-        List<Employee> result = employeeRepository.findByDayAvailablesContainingAndSkillsIn(dayOfWeek, employeeDTO.getSkills());
+//        DayOfWeek dayOfWeek = employeeDTO.getDate().getDayOfWeek();
+//        List<Employee> result = employeeRepository.findByDayAvailablesContainingAndSkillsIn(dayOfWeek, employeeDTO.getSkills());
+//
+//        return result.stream()
+//                .map(employee -> new EmployeeDTO(
+//                        employee.getId(),
+//                        employee.getName(),
+//                        employee.getSkills(),
+//                        employee.getDayAvailables()
+//                ))
+//                .collect(Collectors.toList());
 
-        return result.stream()
+        DayOfWeek dayOfWeek = employeeDTO.getDate().getDayOfWeek();
+        Set<EmployeeSkill> requiredSkills = employeeDTO.getSkills();
+
+        List<Employee> result = this.employeeRepository.findAll();
+
+        List<Employee> availableEmployees = result.stream()
+                .filter(employee -> employee.getDayAvailables().contains(dayOfWeek) &&
+                        employee.getSkills().containsAll(requiredSkills))
+                .collect(Collectors.toList());
+
+        return availableEmployees.stream()
                 .map(employee -> new EmployeeDTO(
                         employee.getId(),
                         employee.getName(),

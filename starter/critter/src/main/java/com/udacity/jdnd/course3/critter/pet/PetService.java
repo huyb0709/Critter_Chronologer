@@ -58,7 +58,7 @@ public class PetService {
     }
 
     List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
-        List<Pet> pets = petRepository.findByOwerId(ownerId);
+        List<Pet> pets = petRepository.findByOwnerId(ownerId);
         List<PetDTO> petDTOs = new ArrayList<>();
         for (Pet pet : pets) {
             petDTOs.add(new PetDTO(
